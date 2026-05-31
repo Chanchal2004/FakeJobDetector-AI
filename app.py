@@ -1,6 +1,5 @@
 import os
 import pickle
-import keras.src.legacy
 from flask import Flask, request, render_template
 
 # Disable TensorFlow logs
@@ -9,13 +8,18 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 app = Flask(__name__)
 
-# Load tokenizer
-print("Loading tokenizer...")
+# Safe tokenizer loading
+try:
+    print("Loading tokenizer...")
 
-with open("tokenizer.pkl", "rb") as f:
-    tokenizer = pickle.load(f)
+    with open("tokenizer.pkl", "rb") as f:
+        tokenizer = pickle.load(f)
 
-print("Tokenizer loaded!")
+    print("Tokenizer loaded!")
+
+except Exception as e:
+    print("Tokenizer loading failed:", e)
+    tokenizer = None
 
 @app.route("/", methods=["GET"])
 def home():
@@ -34,45 +38,53 @@ def predict():
 
     text = combined_text.lower()
 
-    # Simple AI-like scam logic
+    # AI-like scam logic
     scam_keywords = [
-    "registration fee",
-    "refundable deposit",
-    "deposit required",
-    "pay fee",
-    "training fee",
-    "whatsapp",
-    "telegram",
-    "quick money",
-    "earn money",
-    "no experience required",
-    "work from home",
-    "limited seats",
-    "immediate hiring",
-    "international clients",
-    "easy income",
-    "guaranteed job"
-]
+        "registration fee",
+        "refundable deposit",
+        "deposit required",
+        "pay fee",
+        "training fee",
+        "whatsapp",
+        "telegram",
+        "quick money",
+        "earn money",
+        "no experience required",
+        "work from home",
+        "limited seats",
+        "immediate hiring",
+        "international clients",
+        "easy income",
+        "guaranteed job"
+    ]
 
     score = 0
+    matched_keywords = []
 
     for word in scam_keywords:
         if word in text:
             score += 1
+            matched_keywords.append(word)
 
     if score >= 2:
         result = "⚠ Fraudulent Job Post Detected"
-        explanation = """
-        Reasons:
-        - Suspicious wording detected
-        - Possible scam tactics
-        - Unrealistic promises or urgency
-        """
+
+        explanation = f"""
+Reasons:
+- Suspicious wording detected
+- Possible scam tactics
+- Unrealistic promises or urgency
+
+Detected Keywords:
+{', '.join(matched_keywords)}
+"""
+
     else:
         result = "✅ Legitimate Looking Job Post"
+
         explanation = """
-        No major scam indicators detected.
-        """
+No major scam indicators detected.
+"""
 
     return render_template(
         "index.html",
