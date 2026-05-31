@@ -1,5 +1,6 @@
 import os
 import pickle
+import keras.src.legacy
 from flask import Flask, request, render_template
 
 # Disable TensorFlow logs
