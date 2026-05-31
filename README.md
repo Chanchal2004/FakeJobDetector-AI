@@ -5,6 +5,8 @@
 ## Project Overview
 This project uses an **LSTM-based deep learning model** to detect fraudulent job postings with an accuracy of **98%**. The solution involves extensive data preprocessing (text cleaning, tokenization, and padding), addressing class imbalance using SMOTE, and training an LSTM network to classify postings as either fraudulent or legitimate. The final model is deployed as a Flask web application and is also converted to TensorFlow Lite for edge deployment.
 
+https://fakejobdetector-ai-2.onrender.com    #FakeJobDetector-AI Live Demo
+
 ---
 
 ## Table of Contents
